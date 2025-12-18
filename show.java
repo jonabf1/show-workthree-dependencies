@@ -8,7 +8,7 @@ import java.util.stream.*;
  * Encontra recursivamente todas as dependências de uma classe Java.
  * 
  * Compilar: javac FindJavaDeps.java
- * Executar: java FindJavaDeps src/main/java/com/example/controller/UserController.java com.example
+ * Executar: java FindJavaDeps
  */
 public class FindJavaDeps {
     
@@ -157,25 +157,54 @@ public class FindJavaDeps {
     }
     
     public static void main(String[] args) {
-        String filePath = "C:\\Users\\jon\\project\\src\\main\\java\\br\\com\\employee\\adapter\\controller\\Test.java";
+        // ============================================================
+        // 🔥 COLE SEU PATH ABSOLUTO AQUI:
+        // Aceita tanto Windows (C:\path\to\file) quanto Linux (/path/to/file)
+        // ============================================================
+        String filePath = "C:\\Users\\seu-usuario\\projetos\\meu-projeto\\src\\main\\java\\com\\example\\controller\\UserController.java";
+        
+        // ============================================================
+        // 🔧 OPCIONAL: Defina o pacote base manualmente (deixe null para auto-detectar)
+        // ============================================================
+        String basePackage = null; // auto-detecta
+        // String basePackage = "com.example"; // ou defina manualmente
+        
+        // ============================================================
+        // 🔧 OPCIONAL: Ajuste a raiz do src se for diferente
+        // ============================================================
+        String srcRoot = "src/main/java";
+        
+        // ============================================================
+        // 🔧 OPCIONAL: Ajuste profundidade máxima
+        // ============================================================
+        int maxDepth = 50;
+        
+        // ============================================================
+        
+        // Normaliza o path (aceita \ do Windows e / do Linux/Mac)
+        filePath = filePath.replace("\\", "/");
         
         if (!Files.exists(Path.of(filePath))) {
             System.err.println("❌ Arquivo não encontrado: " + filePath);
+            System.err.println("💡 Verifique se:");
+            System.err.println("   - O caminho está correto");
+            System.err.println("   - Você está executando na raiz do projeto");
+            System.err.println("   - O arquivo realmente existe nesse local");
             System.exit(1);
         }
         
         // Detecta ou usa pacote base fornecido
-        String basePackage = args.length > 1 ? args[1] : detectBasePackage(filePath);
         if (basePackage == null) {
-            System.err.println("❌ Não foi possível detectar o pacote base. Forneça como segundo argumento.");
-            System.exit(1);
+            basePackage = detectBasePackage(filePath);
+            if (basePackage == null) {
+                System.err.println("❌ Não foi possível detectar o pacote base.");
+                System.err.println("💡 Defina manualmente na variável 'basePackage' (ex: \"com.example\")");
+                System.exit(1);
+            }
         }
         
-        String srcRoot = args.length > 2 ? args[2] : SRC_ROOT;
-        int maxDepth = args.length > 3 ? Integer.parseInt(args[3]) : 50;
-        
         System.out.println("🔍 Buscando dependências de: " + filePath);
-        System.out.println("📦 Pacote base: " + basePackage);
+        System.out.println("📦 Pacote base detectado: " + basePackage);
         System.out.println("📁 Raiz do código: " + srcRoot);
         System.out.println("🔢 Profundidade máxima: " + maxDepth);
         System.out.println();
@@ -192,7 +221,6 @@ public class FindJavaDeps {
         System.out.println("\n💡 Para adicionar ao Git:");
         System.out.println("git add " + String.join(" ", dependencies));
         
-        // Opcional: mostra apenas arquivos modificados
         System.out.println("\n📝 Dependências modificadas no Git:");
         Set<String> modified = getModifiedFiles();
         Set<String> modifiedDeps = dependencies.stream()
