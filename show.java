@@ -157,16 +157,7 @@ public class FindJavaDeps {
     }
     
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("Uso: java FindJavaDeps <arquivo.java> [pacote_base] [src_root] [max_depth]");
-            System.out.println("\nExemplos:");
-            System.out.println("  java FindJavaDeps src/main/java/com/example/controller/UserController.java");
-            System.out.println("  java FindJavaDeps src/main/java/com/example/controller/UserController.java com.example");
-            System.out.println("  java FindJavaDeps src/main/java/br/com/empresa/App.java br.com.empresa src/main/java 50");
-            System.exit(1);
-        }
-        
-        String filePath = args[0];
+        String filePath = "C:\\Users\\jon\\project\\src\\main\\java\\br\\com\\employee\\adapter\\controller\\Test.java";
         
         if (!Files.exists(Path.of(filePath))) {
             System.err.println("❌ Arquivo não encontrado: " + filePath);
